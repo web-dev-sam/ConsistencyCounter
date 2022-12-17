@@ -2,17 +2,17 @@
   "$schema": "https://raw.githubusercontent.com/bsmg/BSIPA-MetadataFileSchema/master/Schema.json",
   "id": "ConsistencyCounter",
   "name": "ConsistencyCounter",
-  "author": "GoosyChan",
-  "version": "0.0.1",
-  "description": "",
-  "gameVersion": "1.20.0",
+  "author": "GoosyChan (Original by rakkyo150)",
+  "version": "1.0.0",
+  "description": "Shows a number to keep track of your acc consistency. The lower it is the better.",
+  "gameVersion": "1.24.0",
   "dependsOn": {
-    "BSIPA": "^4.0.5",
-    "Counters+": "^2.2.7"
+    "BSIPA": "^4.1.6",
+    "Counters+": "^2.2.1"
   },
   "features": {
     "CountersPlus.CustomCounter": {
-      "Name": "Consistency Counter",
+      "Name": "Acc Consistency",
       "Description": "",
       "CounterLocation": "ConsistencyCounter.ConsistencyCounter",
       "MultiplayerReady": true,

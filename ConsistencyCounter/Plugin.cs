@@ -12,7 +12,7 @@ namespace ConsistencyCounter
         internal static string Name => "ConsistencyCounter";
 
         [Init]
-        public void Init(IPALogger logger, IPA.Config.Config config)
+        public Plugin(IPALogger logger, IPA.Config.Config config)
         {
             Config.Instance = config.Generated<Config>();
             Instance = this;

@@ -83,5 +83,15 @@ namespace ConsistencyCounter
                 Config.Instance.OffsetZ = value;
             }
         }
+
+        [UIValue("IncludeSwingScore")]
+        public bool IncludeSwingScore
+        {
+            get => Config.Instance.IncludeSwingScore;
+            set
+            {
+                Config.Instance.IncludeSwingScore = value;
+            }
+        }
     }
 }

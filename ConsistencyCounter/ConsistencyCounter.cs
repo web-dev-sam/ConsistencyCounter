@@ -1,6 +1,7 @@
 ﻿using CountersPlus.Counters.Custom;
 using CountersPlus.Counters.Interfaces;
 using IPA.Config.Data;
+using ModestTree;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -16,10 +17,11 @@ namespace ConsistencyCounter
 
         private readonly bool SHOW_LABEL = Config.Instance.EnableLabel;
         private readonly bool SEPARATE_HANDS = Config.Instance.SeparateSaber;
-        private readonly int DEFAULT_DECIMALS = Config.Instance.DecimalPrecision;
+        private readonly int DECIMALS = Config.Instance.DecimalPrecision;
         private readonly string LABEL_TEXT = "Acc Consistency";
         private readonly float LABEL_FONT_SIZE = Config.Instance.LabelFontSize;
         private readonly float FIGURE_FONT_SIZE = Config.Instance.FigureFontSize;
+        private readonly bool INCLUDE_SWING = Config.Instance.IncludeSwingScore;
 
         private readonly float posX = Config.Instance.OffsetX;
         private readonly float posY = Config.Instance.OffsetY;
@@ -39,7 +41,6 @@ namespace ConsistencyCounter
                 label.text = LABEL_TEXT;
                 label.fontSize = LABEL_FONT_SIZE;
             }
-            return;
 
             Vector3 leftOffset = new Vector3(posX, posY - .2f, posZ);
             TextAlignmentOptions leftAlign = TextAlignmentOptions.Top;
@@ -48,7 +49,7 @@ namespace ConsistencyCounter
                 rightCounterText = CanvasUtility.CreateTextFromSettings(Settings, new Vector3(posX + .2f, posY - .2f, posZ));
                 rightCounterText.lineSpacing = -26;
                 rightCounterText.fontSize = FIGURE_FONT_SIZE;
-                rightCounterText.text = DEFAULT_DECIMALS.ToString();
+                rightCounterText.text = "100.0";
                 rightCounterText.alignment = TextAlignmentOptions.TopLeft;
 
                 leftOffset = new Vector3(posX - .2f, posY - .2f, posZ);
@@ -58,7 +59,7 @@ namespace ConsistencyCounter
             leftCounterText = CanvasUtility.CreateTextFromSettings(Settings, leftOffset);
             leftCounterText.lineSpacing = -26;
             leftCounterText.fontSize = FIGURE_FONT_SIZE;
-            leftCounterText.text = DEFAULT_DECIMALS.ToString();
+            leftCounterText.text = "100.0";
             leftCounterText.alignment = leftAlign;
 
             scoreController.scoringForNoteFinishedEvent += ScoreController_scoringForNoteFinishedEvent;
@@ -73,6 +74,7 @@ namespace ConsistencyCounter
             }
 
             int cutDistance = goodCut.cutScoreBuffer.centerDistanceCutScore;
+            int totalCut = goodCut.cutScoreBuffer.cutScore;
             bool isLeftHandEvent = goodCut.noteData.colorType == ColorType.ColorA;
             bool isRelevantNoteEvent =
                 goodCut.noteData.scoringType == NoteData.ScoringType.Normal ||
@@ -81,27 +83,31 @@ namespace ConsistencyCounter
             if (isRelevantNoteEvent)
             {
                 List<double> handAccuracyList = isLeftHandEvent ? leftAccuracyList : rightAccuracyList;
-                handAccuracyList.Add(cutDistance);
-                combinedAccuracyList.Add(cutDistance);
+                handAccuracyList.Add(INCLUDE_SWING ? totalCut : cutDistance);
+                combinedAccuracyList.Add(INCLUDE_SWING ? totalCut : cutDistance);
             }
 
             if (!SEPARATE_HANDS)
             {
-                leftCounterText.text = GetStandardDeviation(combinedAccuracyList).ToString($"F{DEFAULT_DECIMALS}");
+                leftCounterText.text = GetStandardDeviation(combinedAccuracyList).ToString($"F{DECIMALS}");
                 return;
             }
 
             if (isLeftHandEvent)
-                leftCounterText.text = GetStandardDeviation(leftAccuracyList).ToString($"F{DEFAULT_DECIMALS}");
-            else rightCounterText.text = GetStandardDeviation(rightAccuracyList).ToString($"F{DEFAULT_DECIMALS}");
-
+                leftCounterText.text = GetStandardDeviation(leftAccuracyList).ToString($"F{DECIMALS}");
+            else rightCounterText.text = GetStandardDeviation(rightAccuracyList).ToString($"F{DECIMALS}");
         }
 
         private double GetStandardDeviation(List<double> values)
         {
+            if (values.IsEmpty()) return 100.0;
+
             double average = values.Average();
             double sumOfSquares = values.Sum(x => Math.Pow(x - average, 2));
-            return Math.Sqrt(sumOfSquares / (values.Count - 1)); ;
+            double standardDeviation = Math.Sqrt(sumOfSquares / values.Count);
+            double normalizedNoSwingStandardDeviation = (7.5f - standardDeviation) * 100f / 7.5f;
+            double normalizedWithSwingStandardDeviation = (57.5f - standardDeviation) * 100f / 57.5f;
+            return INCLUDE_SWING ? normalizedWithSwingStandardDeviation : normalizedNoSwingStandardDeviation;
         }
 
         public void OnNoteMiss(NoteData data) { }
@@ -111,7 +117,7 @@ namespace ConsistencyCounter
         public override void CounterDestroy() {
             leftCounterText = null;
             rightCounterText = null;
-            //scoreController.scoringForNoteFinishedEvent -= ScoreController_scoringForNoteFinishedEvent;
+            scoreController.scoringForNoteFinishedEvent -= ScoreController_scoringForNoteFinishedEvent;
         }
 
     }
