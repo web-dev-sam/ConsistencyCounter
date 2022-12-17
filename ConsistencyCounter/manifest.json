@@ -1,0 +1,31 @@
+﻿{
+  "$schema": "https://raw.githubusercontent.com/bsmg/BSIPA-MetadataFileSchema/master/Schema.json",
+  "id": "ConsistencyCounter",
+  "name": "ConsistencyCounter",
+  "author": "GoosyChan",
+  "version": "0.0.1",
+  "description": "",
+  "gameVersion": "1.20.0",
+  "dependsOn": {
+    "BSIPA": "^4.0.5",
+    "Counters+": "^2.2.7"
+  },
+  "features": {
+    "CountersPlus.CustomCounter": {
+      "Name": "Consistency Counter",
+      "Description": "",
+      "CounterLocation": "ConsistencyCounter.ConsistencyCounter",
+      "MultiplayerReady": true,
+      "ConfigDefaults": {
+        "Enable": true,
+        "Position": "AboveCombo",
+        "Distance": 0
+      },
+      "BSML": {
+        "Resource": "ConsistencyCounter.settings.bsml",
+        "Host": "ConsistencyCounter.SettingsHandler",
+        "Icon": "ConsistencyCounter.Images.icon.png"
+      }
+    }
+  }
+}
