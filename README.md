@@ -10,7 +10,7 @@ _A Counters+ extension that shows you how consistent your accuracy is. 🎯_
 &nbsp;
 
 ## Why does this exist?
-1. This is my first mod.
+Consistency is a very important part of improving accuracy, so I wanted a counter for it. Also my first mod.
 
 ## What is consistency
 - 0 is very bad, its so bad that its good again if you manage to hit a 0 😂.

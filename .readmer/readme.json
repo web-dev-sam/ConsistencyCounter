@@ -1,9 +1,7 @@
 {
   "title": "ConsistencyCounter",
   "tagline": "A Counters+ extension that shows you how consistent your accuracy is. 🎯",
-  "why": [
-    "This is my first mod."
-  ],
+  "why": "Consistency is a very important part of improving accuracy, so I wanted a counter for it. Also my first mod.",
   "sections": [
     {
       "title": "What is consistency",
